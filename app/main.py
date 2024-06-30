@@ -91,48 +91,33 @@ print(f"Initial Model Accuracy: {accuracy}")
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
-    print(data);
-    statement = data['statement']
+    text = data['statement']
 
     model = joblib.load('model.pkl')
     vectorizer = joblib.load('vectorizer.pkl')
 
-    statement_processed = preprocess_text(statement)
-    print(statement_processed)
-    X = vectorizer.transform([statement_processed])
-    print(X)
+    text_processed = preprocess_text(text)
+    X = vectorizer.transform([text_processed])
     prediction = model.predict(X)[0]
-    print(prediction)
 
     return jsonify({
-        'statement': statement,
+        'text': text,
         'prediction': 'True' if prediction == 1 else 'False',
         'accuracy': accuracy
     })
 
 @app.route('/add_statement', methods=['POST'])
 def add_statement():
-    global df
     data = request.json
-    statement = data['statement']
+    text = data['text']
     label = data['label']  # 1 for True, 0 for False
 
     if label not in [0, 1]:
         return jsonify({"error": "Invalid label. Use 1 for True, 0 for False."}), 400
 
-    statement_processed = preprocess_text(statement)
-
-    # Check if the statement or any part of it already exists
-    existing_statements = df['statement'].tolist()
-    if statement_processed in existing_statements:
-        return jsonify({"error": "Statement already exists in the dataset."}), 400
-
-    for existing_statement in existing_statements:
-        if statement_processed in existing_statement or existing_statement in statement_processed:
-            return jsonify({"error": "A similar statement already exists in the dataset."}), 400
-
-    
-    new_data = pd.DataFrame({'label': [label], 'statement': [statement_processed]})
+    global df
+    text_processed = preprocess_text(text)
+    new_data = pd.DataFrame({'label': [label], 'statement': [text_processed]})
     df = pd.concat([df, new_data], ignore_index=True)
 
     new_accuracy = train_and_save_model(df)
