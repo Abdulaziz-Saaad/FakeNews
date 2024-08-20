@@ -93,12 +93,14 @@ def predict():
     data = request.json
     text = data['statement']
 
-    model = joblib.load('model.pkl')
-    vectorizer = joblib.load('vectorizer.pkl')
+    model = joblib.load('../train/model.pkl')
+    vectorizer = joblib.load('../train/vectorizer.pkl')
 
     text_processed = preprocess_text(text)
     X = vectorizer.transform([text_processed])
+    print(X)
     prediction = model.predict(X)[0]
+    print(model.predict(X))
 
     return jsonify({
         'text': text,
@@ -109,7 +111,7 @@ def predict():
 @app.route('/add_statement', methods=['POST'])
 def add_statement():
     data = request.json
-    text = data['text']
+    text = data['statement']
     label = data['label']  # 1 for True, 0 for False
 
     if label not in [0, 1]:

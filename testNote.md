@@ -25,3 +25,7 @@ curl -X POST http://127.0.0.1:5000/predict -H "Content-Type: application/json" -
 3. "The government is secretly replacing citizens' mobile phones with devices that track their every move."
 4. "A new miracle drug promises to cure all types of cancer within 24 hours of a single dose."
 5. "Elon Musk plans to implant microchips in human brains to control thoughts and actions remotely."
+
+
+Mothedolgy
+prevois work
